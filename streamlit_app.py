@@ -113,82 +113,27 @@ TEAM_IDS = {
 }
 
 
-def get_match_data(team_1, team_2):
-    import datetime
-
+def get_match_data(team_1_pl, team_2_pl):
     end_date = datetime.date.today()
-    start_date = end_date - datetime.timedelta(days=3 * 365)
+    start_date = end_date - datetime.timedelta(days=3*365)
 
     headers = {"Authorization": f"Bearer {API_KEY}"}
-    params = {
-        "gender": "men",
-        "category": "national",
-        "from": start_date,
-        "to": end_date
-    }
 
-    response = requests.get(BASE_URL, headers=headers, params=params)
-    if response.status_code != 200:
+    # Zmieniamy polskie nazwy na angielskie
+    team_1 = TEAM_NAME_MAP.get(team_1_pl.lower())
+    team_2 = TEAM_NAME_MAP.get(team_2_pl.lower())
+
+    if not team_1 or not team_2:
         return {
-            "match": f"{team_1} vs {team_2}",
-            "type": "Błąd zapytania",
-            "confidence": "?",
-            "value": "?",
-            "analysis": "❌ Nie udało się pobrać danych meczowych."
+            "match": f"{team_1_pl} vs {team_2_pl}",
+            "type": "Nie znaleziono drużyny",
+            "confidence": "❌",
+            "value": "❌",
+            "analysis": f"Jedna z drużyn nie została rozpoznana. Upewnij się, że wpisujesz nazwę poprawnie (np. 'polska', 'włochy')."
         }
 
-    data = response.json().get("data", [])
-
-    def analyze(team):
-        sets_won = sets_lost = pts_scored = pts_lost = 0
-        opponents = set()
-
-        for match in data:
-            team_names = [match["team_1_name"].lower(), match["team_2_name"].lower()]
-            if team.lower() not in team_names:
-                continue
-
-            if "sets" not in match or "scores" not in match:
-                continue
-
-            if match["team_1_name"].lower() == team.lower():
-                team_sets = match["sets"]["team_1"]
-                opp_sets = match["sets"]["team_2"]
-                team_pts = match["scores"]["team_1"]
-                opp_pts = match["scores"]["team_2"]
-                opponents.add(match["team_2_name"])
-            else:
-                team_sets = match["sets"]["team_2"]
-                opp_sets = match["sets"]["team_1"]
-                team_pts = match["scores"]["team_2"]
-                opp_pts = match["scores"]["team_1"]
-                opponents.add(match["team_1_name"])
-
-            sets_won += team_sets
-            sets_lost += opp_sets
-            pts_scored += team_pts
-            pts_lost += opp_pts
-
-        return {
-            "sets_won": sets_won,
-            "sets_lost": sets_lost,
-            "pts_scored": pts_scored,
-            "pts_lost": pts_lost,
-            "opponents": list(opponents)
-        }
-
-    stats_1 = analyze(team_1)
-    stats_2 = analyze(team_2)
-
-    return {
-        "match": f"{team_1} vs {team_2}",
-        "type": "Typ testowy",
-        "confidence": "?",
-        "value": "?",
-        "analysis": f"{team_1}: {stats_1}, {team_2}: {stats_2}"
-    }
-
-
+    team_1_id = TEAM_IDS[team_1]
+    team_2_id = TEAM_IDS[team_2]
 
 team_1 = st.text_input("Drużyna 1", "")
 team_2 = st.text_input("Drużyna 2", "")
