@@ -56,7 +56,7 @@ TEAM_NAME_MAP = {
     "serbia": "serbia",
     "kuwejt": "kuwait",
     "peru": "peru",
-    "cypr": "cyprus"
+    "cypr": "cyprus",
     "słowenia": "Slovenia",
 
 }
