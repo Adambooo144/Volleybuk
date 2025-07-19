@@ -57,6 +57,8 @@ TEAM_NAME_MAP = {
     "kuwejt": "kuwait",
     "peru": "peru",
     "cypr": "cyprus"
+    "słowenia": "Slovenia",
+
 }
 
 # Mapowanie angielskich nazw na ID z API
