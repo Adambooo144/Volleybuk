@@ -3,9 +3,8 @@ import requests
 import os
 import datetime
 
-API_KEY = st.secrets["LNwMzcExgkaJ8-CUPLc_zQ"]
+API_KEY = st.secrets["SPORTDEVS_API_KEY"]
 BASE_URL = "https://sportdevs.com/api/volleyball/matches"
-
 
 def get_match_data(team_1, team_2):
     end_date = datetime.date.today()
